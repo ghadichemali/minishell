@@ -3,14 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_scan.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gchemali <gchemali@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hhamade <hhamade@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 19:09:35 by gchemali          #+#    #+#             */
-/*   Updated: 2026/02/23 16:09:41 by gchemali         ###   ########.fr       */
+/*   Updated: 2026/04/20 06:00:06 by hhamade          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/lexer.h"
+
+static bool	is_op_char(char c)
+{
+	return (c == '|' || c == '<' || c == '>'
+		|| c == '&' || c == '(' || c == ')');
+}
 
 bool	lex_scan(const char *s, t_token **out)
 {
@@ -22,7 +28,7 @@ bool	lex_scan(const char *s, t_token **out)
 		i = skip_spaces(s, i);
 		if (!s[i])
 			break ;
-		if (s[i] == '|' || s[i] == '<' || s[i] == '>')
+		if (is_op_char(s[i]))
 		{
 			if (!lex_op(s, &i, out))
 				return (false);

@@ -3,30 +3,29 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_ops.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gchemali <gchemali@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hhamade <hhamade@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/18 18:07:05 by gchemali          #+#    #+#             */
-/*   Updated: 2026/02/23 16:06:46 by gchemali         ###   ########.fr       */
+/*   Created: 2026/04/20 09:51:09 by hhamade           #+#    #+#             */
+/*   Updated: 2026/04/20 09:56:47 by hhamade          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/lexer.h"
 
-static bool	push_op(t_token **out, t_toktype type, const char *s)
+static bool	handle_pipe_ops(const char *s, int *i, t_token **out)
 {
-	t_token	*tok;
-	char	*val;
-
-	val = ft_strdup(s);
-	if (!val)
+	if (s[*i] != '|')
 		return (false);
-	tok = token_new(type, val);
-	if (!tok)
+	if (s[*i + 1] == '|')
 	{
-		free(val);
-		return (false);
+		if (!push_op(out, TK_OR, "||"))
+			return (false);
+		(*i) += 2;
+		return (true);
 	}
-	token_add_back(out, tok);
+	if (!push_op(out, TK_PIPE, "|"))
+		return (false);
+	(*i) += 1;
 	return (true);
 }
 
@@ -64,15 +63,38 @@ static bool	handle_out_ops(const char *s, int *i, t_token **out)
 	return (true);
 }
 
-bool	lex_op(const char *s, int *i, t_token **out)
+static bool	handle_paren_ops(const char *s, int *i, t_token **out)
 {
-	if (s[*i] == '|')
+	if (s[*i] == '(')
 	{
-		if (!push_op(out, TK_PIPE, "|"))
+		if (!push_op(out, TK_LPAREN, "("))
 			return (false);
-		(*i)++;
+		(*i) += 1;
 		return (true);
 	}
+	if (s[*i] == ')')
+	{
+		if (!push_op(out, TK_RPAREN, ")"))
+			return (false);
+		(*i) += 1;
+		return (true);
+	}
+	return (false);
+}
+
+bool	lex_op(const char *s, int *i, t_token **out)
+{
+	if (s[*i] == '&' && s[*i + 1] == '&')
+	{
+		if (!push_op(out, TK_AND, "&&"))
+			return (false);
+		(*i) += 2;
+		return (true);
+	}
+	if (handle_paren_ops(s, i, out))
+		return (true);
+	if (handle_pipe_ops(s, i, out))
+		return (true);
 	if (handle_in_ops(s, i, out))
 		return (true);
 	if (handle_out_ops(s, i, out))

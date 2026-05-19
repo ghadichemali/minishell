@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer_word.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gchemali <gchemali@student.42.fr>          +#+  +:+       +#+        */
+/*   By: hhamade <hhamade@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 19:09:48 by gchemali          #+#    #+#             */
-/*   Updated: 2026/02/23 16:06:58 by gchemali         ###   ########.fr       */
+/*   Updated: 2026/04/20 06:01:22 by hhamade          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,8 @@ static int	skip_quoted(const char *s, int i, char quote)
 static int	get_word_end(const char *s, int i)
 {
 	while (s[i] && s[i] != ' ' && s[i] != '\t'
-		&& s[i] != '|' && s[i] != '<' && s[i] != '>')
+		&& s[i] != '|' && s[i] != '<' && s[i] != '>'
+		&& s[i] != '&' && s[i] != '(' && s[i] != ')')
 	{
 		if (s[i] == '\'' || s[i] == '"')
 			i = skip_quoted(s, i, s[i]);
